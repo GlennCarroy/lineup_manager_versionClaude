@@ -38,6 +38,10 @@
     </div>
     }
 
+    @if (syncError(); as error) {
+      <p class="border-b border-track-line bg-hot/10 px-5 py-2 text-sm text-hot">{{ error }}</p>
+    }
+
     <div class="flex-1 overflow-y-auto px-5 py-4">
       @if (formMode(); as mode) {
         <h3 class="mb-4 font-display text-2xl font-bold uppercase tracking-wide">

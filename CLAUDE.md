@@ -7,7 +7,9 @@ Application de gestion de lineup et de suivi de match pour le roller derby. Dest
 - Angular 21 (composants standalone, signals, `@if`/`@for`), TypeScript strict.
 - Tailwind CSS v4 (tokens dans `src/styles.css`, bloc `@theme`).
 - Angular CDK pour le drag and drop (`cdkDrag`, `cdkDropList`).
-- Pas de base de données pour l'instant : les données sont en mémoire, à partir de mocks dans `src/app/data/`. Supabase est prévu plus tard.
+- Supabase : seules les **joueuses** sont en base (table `Player`, via `PlayerRepository` et `RosterService`). Les lignes, la zone Jammers et tout ce qui concerne le match restent en mémoire.
+- Configuration : URL et clé **publishable** (`sb_publishable_…`) dans `src/app/core/supabase.config.ts`. Elle est publique ; l'accès est protégé par la RLS côté Supabase. Ne jamais y mettre une clé secrète.
+- `src/app/data/roster.mock.ts` est conservé mais n'est plus utilisé. Ne pas le supprimer sans demander confirmation. `jams.mock.ts` alimente encore les jams.
 
 ## Pages
 
@@ -41,7 +43,8 @@ Application de gestion de lineup et de suivi de match pour le roller derby. Dest
 
 - Les informations données au survol ne sont pas visibles sur tablette : texte de zone du track, motif de désactivation d'une carte. À afficher autrement.
 - La hauteur de la page Game utilise `calc(100dvh-4.5rem)`, valeur approximative pour la barre du haut. À valider sur une tablette réelle.
-- Synchronisation avec Supabase et persistance des données.
+- Persistance du match (jams, passages, pénalités) dans Supabase : à faire plus tard. Bouton « Synchroniser la base » toujours sans action.
+- Le bundle initial dépasse le budget de 500 kB depuis l'ajout de `@supabase/supabase-js` : envisager un chargement différé du client.
 
 ## Commandes
 

@@ -39,6 +39,7 @@ export class CharterDrawerComponent {
   protected readonly noDrop = () => false;
 
   protected readonly players = this.rosterService.players;
+  protected readonly syncError = this.rosterService.syncError;
   protected readonly playerIds = computed(() => this.players().map((player) => player.playerId));
 
   // Sans filtre, toutes les joueuses ; sinon celles qui ont le poste ou la spécialisation choisi
@@ -83,7 +84,8 @@ export class CharterDrawerComponent {
   }
 
   protected savePlayer(player: PlayerType): void {
-    this.rosterService.savePlayer(player);
+    // En édition, l'ancien numéro permet de retrouver la ligne en base si le numéro a changé
+    this.rosterService.savePlayer(player, this.formPlayer()?.playerId);
     this.formMode.set(null);
   }
 
