@@ -1,0 +1,27 @@
+<section class="mx-auto max-w-6xl px-4 py-5 sm:px-6">
+  <header class="mb-5 border-l-4 border-neon pl-4">
+    <p class="font-display text-sm font-bold uppercase tracking-[0.3em] text-neon">Lineup</p>
+    <h1 class="font-display text-3xl font-extrabold uppercase leading-none tracking-tight sm:text-5xl">
+      Roster <span class="text-white/30">{{ placedCount() }}</span>
+    </h1>
+  </header>
+
+  <div #board class="flex flex-col gap-4">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+      @for (line of lines(); track line.name) {
+        <app-line-card
+          [line]="line"
+          [players]="playersOf(line)"
+          (playerDropped)="assign($event, line)"
+          (memberDragEnded)="onLineMemberDragEnded(line, $event)"
+        />
+      }
+    </div>
+
+    <app-jammer-zone
+      [players]="placedJammers()"
+      (playerDropped)="assignJammer($event)"
+      (memberDragEnded)="onJammerMemberDragEnded($event)"
+    />
+  </div>
+</section>

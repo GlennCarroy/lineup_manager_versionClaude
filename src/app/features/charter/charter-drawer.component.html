@@ -1,0 +1,131 @@
+@if (isOpen()) {
+  <aside
+    role="region"
+    aria-labelledby="charter-title"
+    class="fixed z-50 flex max-h-[50vh] flex-col border-t border-track-line bg-track-panel shadow-2xl inset-x-0 bottom-0 md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[28rem] md:border-t-0 md:border-l"
+  >
+    <header class="flex items-start justify-between border-b border-track-line px-5 py-4">
+      <div>
+        <p class="font-display text-xs font-bold uppercase tracking-[0.3em] text-neon">Charter</p>
+        <h2 id="charter-title" class="font-display text-3xl font-extrabold uppercase leading-none">
+          Joueuses <span class="text-white/40">{{ filteredPlayers().length }}/{{ players().length }}</span>
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        (click)="close()"
+        aria-label="Fermer"
+        class="rounded-sm px-3 py-1 font-display text-xl font-bold text-white/60 transition hover:text-white"
+      >
+        ✕
+      </button>
+    </header>
+
+    @if (!isEditing()) {
+    <div class="flex flex-wrap gap-2 border-b border-track-line px-5 py-3">
+      @for (filter of filters; track filter.code) {
+        <button
+          type="button"
+          (click)="toggleFilter(filter.code)"
+          [attr.aria-pressed]="activeFilter() === filter.code"
+          class="rounded-sm border px-3 py-1 font-display text-sm font-bold uppercase tracking-wider transition"
+          [class]="activeFilter() === filter.code ? 'border-neon bg-neon text-track-night' : 'border-track-line text-white/60 hover:text-white'"
+        >
+          {{ filter.code }} · {{ filter.label }}
+        </button>
+      }
+    </div>
+    }
+
+    <div class="flex-1 overflow-y-auto px-5 py-4">
+      @if (formMode(); as mode) {
+        <h3 class="mb-4 font-display text-2xl font-bold uppercase tracking-wide">
+          {{ mode.kind === 'create' ? 'Nouvelle joueuse' : 'Modifier la joueuse' }}
+        </h3>
+
+        <app-player-form
+          [player]="formPlayer()"
+          [existingIds]="playerIds()"
+          (saved)="savePlayer($event)"
+          (cancelled)="formMode.set(null)"
+        />
+      } @else {
+        <button
+          type="button"
+          (click)="openCreate()"
+          class="mb-4 w-full rounded-sm border border-dashed border-neon/60 px-4 py-3 font-display text-sm font-bold uppercase tracking-wider text-neon transition hover:bg-neon/10"
+        >
+          + Ajouter une joueuse
+        </button>
+
+        <ul
+          cdkDropList
+          cdkDropListSortingDisabled
+          [cdkDropListEnterPredicate]="noDrop"
+          class="flex flex-col gap-2"
+        >
+          @for (player of filteredPlayers(); track player.playerId) {
+            <li
+              cdkDrag
+              [cdkDragData]="player"
+              [cdkDragStartDelay]="{ touch: 250, mouse: 0 }"
+              class="flex cursor-grab items-center gap-3 rounded-sm border border-track-line bg-track-night px-3 py-3 active:cursor-grabbing"
+            >
+              <!-- Aperçu pendant le glisser : seulement le numéro et le nom, sans les boutons -->
+              <div
+                *cdkDragPreview
+                class="flex items-center gap-3 rounded-sm border border-neon bg-track-panel px-3 py-2 shadow-xl"
+              >
+                <span class="font-display text-xl font-extrabold leading-none text-white/90">{{ player.playerId }}</span>
+                <span class="font-display text-lg font-bold uppercase leading-tight">{{ player.derbyName }}</span>
+              </div>
+
+              <!-- Emplacement affiché dans la ligne survolée : même contenu compact -->
+              <div
+                *cdkDragPlaceholder
+                class="flex items-center gap-3 rounded-sm border border-dashed border-neon/60 px-3 py-2"
+              >
+                <span class="font-display text-xl font-extrabold leading-none text-white/50">{{ player.playerId }}</span>
+                <span class="font-display text-lg font-bold uppercase leading-tight text-white/50">{{ player.derbyName }}</span>
+              </div>
+
+              <span class="w-12 font-display text-2xl font-extrabold leading-none text-white/90">
+                {{ player.playerId }}
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <p class="truncate font-display text-lg font-bold uppercase leading-tight">
+                  {{ player.derbyName }}
+                </p>
+                <p class="truncate text-xs uppercase tracking-wider text-white/50">
+                  {{ labelOf(player.position) }}
+                  @if (player.specialization; as specialization) {
+                    · {{ labelOf(specialization) }}
+                  }
+                </p>
+              </div>
+
+              <button
+                type="button"
+                (click)="openEdit(player)"
+                class="rounded-sm px-2 py-1 font-display text-sm font-bold uppercase tracking-wider text-white/60 transition hover:text-neon"
+              >
+                Éditer
+              </button>
+              <button
+                type="button"
+                (click)="deletePlayer(player)"
+                class="rounded-sm px-2 py-1 font-display text-sm font-bold uppercase tracking-wider text-white/60 transition hover:text-hot"
+              >
+                Supprimer
+              </button>
+            </li>
+          } @empty {
+            <li class="py-8 text-center text-sm text-white/50">Aucune joueuse pour ces filtres.</li>
+          }
+        </ul>
+      }
+    </div>
+  </aside>
+}

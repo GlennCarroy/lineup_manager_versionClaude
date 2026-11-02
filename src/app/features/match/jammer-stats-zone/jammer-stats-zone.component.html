@@ -1,0 +1,23 @@
+<section class="flex h-full flex-col rounded-sm border border-track-line bg-track-panel p-5">
+  <p class="mb-4 font-display text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">Statistique des jammers</p>
+
+  <div class="flex flex-col gap-5">
+    @for (jammer of jammerStats(); track jammer.id) {
+      <div>
+        <div class="mb-1 flex justify-between font-display text-base font-bold uppercase tracking-wide">
+          <span>{{ jammer.name }}</span>
+          <span>{{ jammer.points }} pts · {{ jammer.pointsShare }}%</span>
+        </div>
+        <div class="mb-2 h-2 w-full overflow-hidden rounded-sm bg-track-night">
+          <div class="h-full transition-all duration-300" [class]="barColor(jammer.leadRate)" [style.width.%]="jammer.leadRate"></div>
+        </div>
+        <div class="flex justify-between text-xs uppercase tracking-wider text-white/60">
+          <span>Lead</span>
+          <span>{{ jammer.leadRate }}%</span>
+        </div>
+      </div>
+    } @empty {
+      <p class="text-sm text-white/50">Aucun jam joué pour le moment.</p>
+    }
+  </div>
+</section>

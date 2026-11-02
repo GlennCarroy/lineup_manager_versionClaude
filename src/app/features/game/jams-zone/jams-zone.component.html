@@ -1,0 +1,117 @@
+<section class="flex min-h-0 flex-1 flex-col gap-6 rounded-sm border border-track-line bg-track-panel p-6">
+  <header>
+    <h2 class="font-display text-2xl font-bold uppercase tracking-wide">Jams</h2>
+  </header>
+
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto]">
+    <select
+      (change)="selectLine($event)"
+      class="rounded-sm border border-track-line bg-track-night px-3 py-2 text-white focus:border-neon focus:outline-none"
+    >
+      <option value="">Choisir une ligne</option>
+      @for (line of lines(); track line.name) {
+        <option [value]="line.name">{{ line.name }}</option>
+      }
+    </select>
+
+    <select
+      (change)="selectJammer($event)"
+      class="rounded-sm border border-track-line bg-track-night px-3 py-2 text-white focus:border-neon focus:outline-none"
+    >
+      <option value="">Choisir une jammer</option>
+      @for (jammer of jammers(); track jammer.playerId) {
+        <option [value]="jammer.playerId">{{ jammer.playerId }} · {{ jammer.derbyName }}</option>
+      }
+    </select>
+
+    <button
+      type="button"
+      (click)="addJam()"
+      [disabled]="!canAdd()"
+      class="rounded-sm bg-neon px-4 py-2 font-display text-sm font-bold uppercase tracking-wider text-track-night transition hover:brightness-110 disabled:opacity-40"
+    >
+      Ajouter le jam
+    </button>
+  </div>
+
+  <div class="min-h-0 flex-1 overflow-auto">
+    <table class="w-full min-w-[40rem] text-left text-sm">
+      <thead class="sticky top-0 z-10 bg-track-panel font-display text-xs uppercase tracking-widest text-white/50">
+        <tr class="border-b border-track-line">
+          <th class="py-2 pr-4">Jam</th>
+          <th class="py-2 pr-4">Ligne</th>
+          <th class="py-2 pr-4">Jammer</th>
+          <th class="py-2 pr-4">Lead</th>
+          <th class="py-2 pr-4">Points</th>
+          <th class="py-2 pr-4">Pénalités</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (jam of jams(); track jam.jamNumber) {
+          <tr class="border-b border-track-line/60">
+            <td class="py-3 pr-4 font-display text-lg font-bold">{{ jam.jamNumber }}</td>
+            <td class="py-3 pr-4 uppercase">{{ jam.lineName }}</td>
+            <td class="py-3 pr-4">{{ jammerLabel(jam.jammer) }}</td>
+            <td class="py-3 pr-4">
+              <button
+                type="button"
+                (click)="toggleLead(jam.jamNumber)"
+                [attr.aria-pressed]="jam.lead"
+                aria-label="Lead jammer"
+                class="text-2xl leading-none transition"
+                [class]="jam.lead ? 'text-neon' : 'text-white/25 hover:text-white/60'"
+              >
+                ★
+              </button>
+            </td>
+            <td class="py-3 pr-4">
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  (click)="addPoints(jam.jamNumber, -1)"
+                  aria-label="Retirer un point"
+                  class="h-11 w-11 rounded-sm border border-track-line font-display text-lg font-bold text-white/70 transition hover:text-white"
+                >
+                  −
+                </button>
+                <span class="w-8 text-center font-display text-xl font-extrabold">{{ jam.points }}</span>
+                <button
+                  type="button"
+                  (click)="addPoints(jam.jamNumber, 4)"
+                  aria-label="Ajouter 4 points"
+                  class="h-11 rounded-sm bg-neon px-4 font-display text-sm font-bold text-track-night transition hover:brightness-110"
+                >
+                  +4
+                </button>
+              </div>
+            </td>
+            <td class="py-3 pr-4">
+              <div class="flex items-center gap-2">
+                <span class="w-8 text-center font-display text-xl font-extrabold">{{ jam.penalties.length }}</span>
+                <button
+                  type="button"
+                  (click)="openPenaltyDrawer(jam.jamNumber)"
+                  class="rounded-sm border border-track-line px-4 py-2.5 font-display text-sm font-bold uppercase tracking-wider text-white/60 transition hover:text-white"
+                >
+                  Gérer
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="py-8 text-center text-white/50">Aucun jam pour le moment.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <app-penalty-drawer
+    [jam]="openedJam()"
+    [players]="openedCandidates()"
+    (closed)="closePenaltyDrawer()"
+    (penaltyAdded)="addPenalty($event)"
+    (penaltyRemoved)="removePenalty($event)"
+  />
+</section>

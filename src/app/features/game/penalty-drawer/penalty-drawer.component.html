@@ -1,0 +1,61 @@
+@if (jam(); as current) {
+  <div class="fixed inset-0 z-40 bg-black/60" (click)="closed.emit()"></div>
+
+  <aside
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="penalty-title"
+    class="fixed inset-x-0 bottom-0 z-50 max-h-[80vh] overflow-y-auto rounded-t-sm border-t border-track-line bg-track-panel p-5 shadow-2xl md:inset-y-0 md:left-auto md:right-0 md:max-h-none md:w-[28rem] md:rounded-none md:border-l md:border-t-0"
+  >
+    <header class="mb-4 flex items-start justify-between">
+      <div>
+        <p class="font-display text-xs font-bold uppercase tracking-[0.3em] text-hot">Pénalités</p>
+        <h2 id="penalty-title" class="font-display text-3xl font-extrabold uppercase leading-none">
+          Jam {{ current.jamNumber }} <span class="text-white/40">· {{ current.lineName }}</span>
+        </h2>
+      </div>
+
+      <button
+        type="button"
+        (click)="closed.emit()"
+        aria-label="Fermer"
+        class="rounded-sm px-3 py-1 font-display text-xl font-bold text-white/60 transition hover:text-white"
+      >
+        ✕
+      </button>
+    </header>
+
+    <p class="mb-4 text-sm text-white/50">Clique sur une joueuse pour ajouter une pénalité à ce jam.</p>
+
+    <div class="grid grid-cols-2 gap-3">
+      @for (player of players(); track player.playerId) {
+        <div>
+          <button
+            type="button"
+            (click)="penaltyAdded.emit(player.playerId)"
+            [disabled]="countInMatch(player.playerId) >= maxPenalties"
+            class="block w-full text-left disabled:cursor-not-allowed"
+            [attr.aria-label]="'Ajouter une pénalité à ' + player.derbyName"
+          >
+            <app-player-card [player]="player" [penalties]="countInMatch(player.playerId)" />
+          </button>
+
+          <div class="mt-1 flex items-center justify-end text-xs uppercase tracking-wider text-white/60">
+            @if (countInJam(player.playerId) > 0) {
+              <button
+                type="button"
+                (click)="penaltyRemoved.emit(player.playerId)"
+                aria-label="Retirer une pénalité"
+                class="rounded-sm border border-track-line px-4 py-2.5 font-display font-bold text-white/70 transition hover:text-white"
+              >
+                −1
+              </button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <p class="col-span-2 py-8 text-center text-sm text-white/50">Aucune joueuse à pénaliser pour cette ligne.</p>
+      }
+    </div>
+  </aside>
+}

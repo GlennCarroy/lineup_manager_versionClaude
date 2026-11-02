@@ -1,0 +1,9 @@
+<div cdkDropListGroup>
+  <app-header />
+  <app-charter-drawer />
+
+  <!-- Le contenu se décale pour laisser le drawer visible : à côté sur desktop, au-dessus sur mobile -->
+  <main [class]="drawerOpen() ? 'md:pr-[28rem] max-md:pb-[50vh]' : ''">
+    <router-outlet />
+  </main>
+</div>

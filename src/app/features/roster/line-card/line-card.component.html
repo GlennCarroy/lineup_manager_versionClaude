@@ -1,0 +1,42 @@
+<article
+  cdkDropList
+  cdkDropListSortingDisabled
+  [cdkDropListEnterPredicate]="canEnter"
+  (cdkDropListDropped)="onDrop($event)"
+  class="flex min-h-64 flex-col rounded-sm border border-track-line bg-track-panel p-4"
+>
+  <header class="mb-4 flex items-center justify-between">
+    <h2 class="font-display text-2xl font-bold uppercase tracking-wide">{{ line().name }}</h2>
+    <span class="font-display text-lg font-bold" [class]="isFull() ? 'text-neon' : 'text-white/50'">
+      {{ players().length }}/{{ maxPlayers() }}
+    </span>
+  </header>
+
+  <div class="flex flex-1 flex-col gap-2">
+    @for (player of players(); track player.playerId) {
+      <div
+        cdkDrag
+        [cdkDragData]="player"
+        [cdkDragStartDelay]="{ touch: 250, mouse: 0 }"
+        (cdkDragEnded)="onMemberDragEnded(player, $event)"
+        animate.leave="row-leave"
+        class="flex cursor-grab items-center gap-3 rounded-sm border border-track-line bg-track-night px-3 py-2 active:cursor-grabbing"
+      >
+        <span class="w-10 font-display text-xl font-extrabold leading-none text-white/90">{{ player.playerId }}</span>
+        <span class="truncate font-display text-lg font-bold uppercase leading-tight">{{ player.derbyName }}</span>
+
+        @if (player.specialization; as specialization) {
+          <span class="ml-auto rounded-sm bg-hot px-2 py-0.5 font-display text-xs font-bold uppercase tracking-wider text-white">
+            {{ specialization === 'P' ? 'Pivot' : 'Offense' }}
+          </span>
+        }
+      </div>
+    }
+
+    @for (slot of emptySlots(); track slot) {
+      <div class="flex flex-1 items-center justify-center rounded-sm border border-dashed border-track-line py-3 text-xs uppercase tracking-widest text-white/30">
+        Emplacement libre
+      </div>
+    }
+  </div>
+</article>

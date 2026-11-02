@@ -1,0 +1,87 @@
+<section class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+  <header class="mb-6 flex items-baseline justify-between gap-4">
+    <h1 class="font-display text-3xl font-extrabold uppercase leading-none tracking-tight">
+      Statistiques et pénalités
+    </h1>
+    <a
+      routerLink="/game"
+      class="font-display text-xs font-bold uppercase tracking-wider text-white/50 transition hover:text-neon"
+    >
+      ← Retour au Game
+    </a>
+  </header>
+
+  <div class="mb-10 grid grid-cols-1 gap-6 md:grid-cols-[2fr_1fr]">
+    <app-jammer-stats-zone />
+    <app-stats-zone class="block" />
+  </div>
+
+  <h2 class="mb-4 font-display text-2xl font-bold uppercase tracking-wide text-ice">
+    Blockers <span class="text-white/40">({{ blockers().length }})</span>
+  </h2>
+  <div class="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    @for (player of blockers(); track player.playerId) {
+      <div>
+        <button
+          type="button"
+          (click)="penalize(player)"
+          [disabled]="cardHint(player.playerId) !== null"
+          [attr.title]="cardHint(player.playerId)"
+          class="block w-full text-left disabled:cursor-not-allowed"
+        >
+          <app-player-card [player]="player" [penalties]="penaltyCount(player.playerId)" />
+        </button>
+
+        @if (penaltyCount(player.playerId) > 0) {
+          <div class="mt-1 flex justify-end">
+            <button
+              type="button"
+              (click)="removeLastPenalty(player)"
+              aria-label="Retirer une pénalité"
+              class="rounded-sm border border-track-line px-4 py-2.5 font-display text-sm font-bold text-white/70 transition hover:text-white"
+            >
+              −1
+            </button>
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="text-white/50">Aucune blocker placée dans une ligne.</p>
+    }
+  </div>
+
+  <h2 class="mb-4 font-display text-2xl font-bold uppercase tracking-wide text-neon">
+    Jammers <span class="text-white/40">({{ jammers().length }})</span>
+  </h2>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    @for (player of jammers(); track player.playerId) {
+      <div>
+        <button
+          type="button"
+          (click)="penalize(player)"
+          [disabled]="cardHint(player.playerId) !== null"
+          [attr.title]="cardHint(player.playerId)"
+          class="block w-full text-left disabled:cursor-not-allowed"
+        >
+          <app-player-card [player]="player" [penalties]="penaltyCount(player.playerId)" />
+        </button>
+
+        @if (penaltyCount(player.playerId) > 0) {
+          <div class="mt-1 flex justify-end">
+            <button
+              type="button"
+              (click)="removeLastPenalty(player)"
+              aria-label="Retirer une pénalité"
+              class="rounded-sm border border-track-line px-4 py-2.5 font-display text-sm font-bold text-white/70 transition hover:text-white"
+            >
+              −1
+            </button>
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="text-white/50">Aucune jammer dans la zone Jammers.</p>
+    }
+  </div>
+
+</section>

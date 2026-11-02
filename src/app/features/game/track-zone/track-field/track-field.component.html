@@ -1,0 +1,113 @@
+<div class="flex h-full min-h-0 flex-col gap-2">
+  <div #wrapper class="@container relative min-h-0 flex-1">
+    <svg
+      [attr.viewBox]="viewBox"
+      class="h-full w-full"
+      role="img"
+      [attr.aria-label]="'Track ' + labels().win + ' / ' + labels().loss"
+      (click)="closePopover()"
+    >
+      <path [attr.d]="outerPath" fill="#151922" stroke="#262e3d" stroke-width="2" pointer-events="none" />
+      <path [attr.d]="innerPath" fill="#0b0d12" stroke="#262e3d" stroke-width="2" pointer-events="none" />
+
+      @for (zone of zones; track zone.id) {
+        <g [class.cursor-pointer]="enabled()" (click)="openPopover($event, zone)">
+          <path [attr.d]="zone.path" fill="transparent" stroke="#262e3d" stroke-width="1">
+            <title>{{ zoneTitle(zone) }}</title>
+          </path>
+          <path
+            [attr.d]="zone.path"
+            [attr.fill]="winFill(zone)"
+            [attr.fill-opacity]="winOpacity(zone)"
+            pointer-events="none"
+          />
+          <path
+            [attr.d]="zone.path"
+            [attr.fill]="lossFill(zone)"
+            [attr.fill-opacity]="lossOpacity(zone)"
+            pointer-events="none"
+          />
+          <text
+            [attr.x]="zone.center.x"
+            [attr.y]="zone.center.y"
+            text-anchor="middle"
+            dominant-baseline="central"
+            font-size="16"
+            font-weight="700"
+            [attr.fill]="zoneNumberColor(zone)"
+            pointer-events="none"
+          >
+            {{ zone.number }}
+          </text>
+        </g>
+      }
+
+      <path
+        [attr.d]="centerMarks"
+        fill="none"
+        stroke="#ffffff"
+        stroke-opacity="0.5"
+        stroke-width="1"
+        pointer-events="none"
+      />
+
+      <path
+        [attr.d]="sectorBoundaries"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="3"
+        stroke-linecap="round"
+        pointer-events="none"
+      />
+
+      <path
+        [attr.d]="lanePath"
+        fill="none"
+        stroke="#ffffff"
+        stroke-opacity="0.3"
+        stroke-dasharray="8 8"
+        pointer-events="none"
+      />
+    </svg>
+
+    <div class="pointer-events-none absolute inset-0 flex items-center justify-center px-6">
+      <p class="text-center font-display text-[clamp(0.75rem,11cqw,1.5rem)] font-extrabold uppercase leading-tight tracking-wide text-white/90">
+        {{ label() }}
+      </p>
+    </div>
+
+    @if (popover(); as current) {
+      <div
+        class="absolute z-10 flex -translate-x-1/2 -translate-y-full gap-2 rounded-sm border border-track-line bg-track-night p-2 shadow-xl"
+        [style.left.px]="current.x"
+        [style.top.px]="current.y - 8"
+      >
+        <button
+          type="button"
+          (click)="choose('win')"
+          class="rounded-sm border border-emerald-500 px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-emerald-300 transition hover:bg-emerald-500/20"
+        >
+          {{ labels().win }}
+        </button>
+        <button
+          type="button"
+          (click)="choose('loss')"
+          class="rounded-sm border border-hot px-3 py-1 font-display text-xs font-bold uppercase tracking-wider text-hot transition hover:bg-hot/20"
+        >
+          {{ labels().loss }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-wrap gap-3 text-[10px] uppercase tracking-wider text-white/50">
+    <span class="flex items-center gap-2">
+      <span class="h-2 w-5 rounded-sm" style="background: linear-gradient(to right, rgb(220 252 231), rgb(22 101 52))"></span>
+      {{ labels().win }}
+    </span>
+    <span class="flex items-center gap-2">
+      <span class="h-2 w-5 rounded-sm" style="background: linear-gradient(to right, rgb(253 224 71), rgb(185 28 28))"></span>
+      {{ labels().loss }}
+    </span>
+  </div>
+</div>

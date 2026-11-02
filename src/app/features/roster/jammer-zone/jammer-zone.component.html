@@ -1,0 +1,34 @@
+<article
+  cdkDropList
+  cdkDropListSortingDisabled
+  [cdkDropListEnterPredicate]="canEnter"
+  (cdkDropListDropped)="onDrop($event)"
+  class="flex flex-col rounded-sm border border-track-line bg-track-panel p-4"
+>
+  <header class="mb-4 flex items-center justify-between">
+    <h2 class="font-display text-2xl font-bold uppercase tracking-wide">Jammers</h2>
+    <span class="font-display text-lg font-bold text-white/50">{{ players().length }}</span>
+  </header>
+
+  <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+    @for (player of players(); track player.playerId) {
+      <div
+        cdkDrag
+        [cdkDragData]="player"
+        [cdkDragStartDelay]="{ touch: 250, mouse: 0 }"
+        (cdkDragEnded)="onMemberDragEnded(player, $event)"
+        animate.leave="row-leave"
+        class="flex cursor-grab items-center gap-3 rounded-sm border border-track-line bg-track-night px-3 py-2 active:cursor-grabbing"
+      >
+        <span class="w-10 font-display text-xl font-extrabold leading-none text-white/90">{{ player.playerId }}</span>
+        <span class="truncate font-display text-lg font-bold uppercase leading-tight">{{ player.derbyName }}</span>
+      </div>
+    }
+
+    @for (slot of emptySlots(); track slot) {
+      <div class="flex items-center justify-center rounded-sm border border-dashed border-track-line py-3 text-xs uppercase tracking-widest text-white/30">
+        Emplacement libre
+      </div>
+    }
+  </div>
+</article>

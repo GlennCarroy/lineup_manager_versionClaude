@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-body: "Barlow", sans-serif;
+
+  --color-track-night: #0b0d12;
+  --color-track-panel: #151922;
+  --color-track-line: #262e3d;
+  --color-neon: #c6ff00;
+  --color-hot: #ff3b4a;
+  --color-ice: #3ec8ff;
+}
+
+/* Animation de sortie d'une blocker retirée d'une ligne */
+@keyframes row-leave {
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.row-leave {
+  animation: row-leave 200ms ease-in forwards;
+}
+
+/* Barres de défilement dans la palette de l'application */
+
+/* Firefox : pas de largeur en pixels, seulement thin ; les propriétés standard ne doivent pas
+   être posées quand le navigateur supporte ::-webkit-scrollbar, sinon elles la désactivent */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #262e3d #0b0d12;
+  }
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0d12;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262e3d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c6ff00;
+}
+
+@layer base {
+  body {
+    @apply min-h-screen bg-track-night font-body text-white antialiased;
+    background-image: repeating-linear-gradient(
+      -55deg,
+      transparent 0 28px,
+      rgb(255 255 255 / 0.02) 28px 29px
+    );
+  }
+}

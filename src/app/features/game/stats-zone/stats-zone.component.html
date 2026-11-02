@@ -1,0 +1,39 @@
+<section class="flex h-full flex-col gap-3">
+  <div class="grid grid-cols-3 gap-3 rounded-sm border border-track-line bg-track-panel p-4">
+    <div>
+      <p class="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">Jams</p>
+      <p class="font-display text-3xl font-extrabold leading-none">{{ jamCount() }}</p>
+    </div>
+    <div>
+      <p class="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">Points</p>
+      <p class="font-display text-3xl font-extrabold leading-none text-neon">{{ totalPoints() }}</p>
+    </div>
+    <div>
+      <p class="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">Pénalités</p>
+      <p class="font-display text-3xl font-extrabold leading-none text-hot">{{ totalPenalties() }}</p>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between rounded-sm border border-track-line bg-track-panel p-4">
+    <p class="font-display text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">Lead jammer</p>
+    <p class="font-display text-3xl font-extrabold leading-none text-hot">{{ leadPercentage() }}%</p>
+  </div>
+
+  <div class="rounded-sm border border-track-line bg-track-panel p-4">
+    <p class="mb-3 font-display text-[10px] font-bold uppercase tracking-[0.25em] text-white/50">Lead par ligne</p>
+
+    <div class="flex flex-col gap-3">
+      @for (line of lineLeadRates(); track line.name) {
+        <div>
+          <div class="mb-1 flex justify-between font-display text-xs font-bold uppercase tracking-wide">
+            <span>{{ line.name }}</span>
+            <span>{{ line.percentage }}%</span>
+          </div>
+          <div class="h-2 w-full overflow-hidden rounded-sm bg-track-night">
+            <div class="h-full transition-all duration-300" [class]="barColor(line.percentage)" [style.width.%]="line.percentage"></div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
